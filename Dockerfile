@@ -1,8 +1,7 @@
 FROM alpine:latest
 
 WORKDIR /app
-RUN useradd app
-RUN usermod -d /app
+RUN adduser -q --home /app app
 USER app
 ADD limiter .
 
