@@ -1,4 +1,6 @@
-FROM debian:latest
+FROM alpine:latest
+
+RUN apk add gcompat
 
 WORKDIR /app
 RUN adduser --home /app --disabled-password app
