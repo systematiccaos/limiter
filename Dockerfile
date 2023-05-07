@@ -2,6 +2,6 @@ FROM alpine:latest
 
 WORKDIR /app
 USER app
-ADD build/limiter .
+ADD limiter .
 
 CMD /app/limiter
