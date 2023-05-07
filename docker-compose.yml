@@ -1,7 +1,7 @@
 version: "3.5"
 services:
   limiter:
-    image: ghcr.io/systematiccaos/limiter/limiter:latest
+    image: ghcr.io/systematiccaos/limiter/limiter:main
     environment:
       - MQTT_CLIENT_ID="${MQTT_CLIENT_ID}"
       - MQTT_URL="${MQTT_URL}"
