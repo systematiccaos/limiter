@@ -40,7 +40,7 @@ jobs:
           go-version: '>=1.19.1' # The Go version to download (if necessary) and use.
       - run: |
           mkdir build
-          CGO_ENABLE=1 go build -o build/limiter cmd/limiter/main.go
+          go build --ldflags '-extldflags "-static"' -o build/limiter cmd/limiter/main.go
         working-directory: ${{ env.working-directory }}
       - uses: actions/upload-artifact@v3
         with:
