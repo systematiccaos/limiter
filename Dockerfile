@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 WORKDIR /app
-RUN adduser -q --home /app app
+RUN adduser --home /app app
 USER app
 ADD limiter .
 
