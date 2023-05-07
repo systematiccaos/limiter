@@ -22,6 +22,7 @@ func main() {
 	user := os.Getenv("MQTT_USER")
 	password := os.Getenv("MQTT_PASSWORD")
 	publish_topic := os.Getenv("MQTT_PUB_TOPIC")
+	logrus.Println(broker)
 	if err := client.Connect(broker, client_id, user, password, true); err != nil {
 		logrus.Fatalf("could not connect to mqtt! %s", err)
 	}
