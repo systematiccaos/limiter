@@ -1,6 +1,5 @@
-FROM alpine:latest
+FROM debian:latest
 
-RUN apk add libc6-compat
 WORKDIR /app
 RUN adduser --home /app --disabled-password app
 ADD limiter .
