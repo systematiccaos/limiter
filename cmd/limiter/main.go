@@ -23,7 +23,7 @@ func main() {
 	password := os.Getenv("MQTT_PASSWORD")
 	publish_topic := os.Getenv("MQTT_PUB_TOPIC")
 	if err := client.Connect(broker, client_id, user, password, true); err != nil {
-		logrus.Fatalln("could not connect to mqtt!")
+		logrus.Fatalf("could not connect to mqtt! %s", err)
 	}
 	power_chan := make(chan mqtt.MQTTSubscriptionMessage)
 
