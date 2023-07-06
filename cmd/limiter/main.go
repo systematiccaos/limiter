@@ -40,6 +40,7 @@ func main() {
 		if last_total_power < 20 && last_total_power != 0.0 {
 			limit = last_total_power + last_solar_power - 20
 		}
+		logrus.Println(time.Since(last_update))
 		if oldlimit != limit && time.Since(last_update) < 10*time.Second {
 			logrus.Printf("limit: %f", limit)
 			logrus.Printf("last_total_power: %f", last_total_power)
