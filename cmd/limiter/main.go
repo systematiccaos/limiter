@@ -13,7 +13,7 @@ import (
 
 var last_total_power float64 = 0.0
 var last_solar_power float64 = 0.0
-var last_update time.Time
+var last_update int
 
 func main() {
 	util.SetupLogs()
@@ -41,8 +41,8 @@ func main() {
 			limit = last_total_power + last_solar_power - 20
 		}
 		logrus.Println(last_update)
-		logrus.Println(time.Since(last_update))
-		if oldlimit != limit && time.Since(last_update) < 10*time.Second {
+		// logrus.Println(time.Since(last_update))
+		if oldlimit != limit && time.Since(time.Unix(int64(last_update), 0)) < 10*time.Second {
 			logrus.Printf("limit: %f", limit)
 			logrus.Printf("last_total_power: %f", last_total_power)
 			logrus.Printf("last_solar_power: %f", last_solar_power)
@@ -84,7 +84,7 @@ func rxPower(power_chan chan mqtt.MQTTSubscriptionMessage) {
 		if msg.Message.Topic() == topic_last_update {
 			var err error
 			timestamp, err := strconv.Atoi(string(msg.Message.Payload()))
-			last_update = time.Unix(int64(timestamp), 0)
+			last_update = timestamp
 			if err != nil {
 				logrus.Errorln(err)
 			}
