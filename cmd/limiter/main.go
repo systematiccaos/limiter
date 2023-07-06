@@ -39,10 +39,10 @@ func main() {
 		if last_total_power < 20 && last_total_power != 0.0 {
 			limit = last_total_power + last_solar_power - 20
 		}
-		logrus.Printf("limit: %f", limit)
-		logrus.Printf("last_total_power: %f", last_total_power)
-		logrus.Printf("last_solar_power: %f", last_solar_power)
 		if oldlimit != limit && time.Since(lastsubmit) >= 10*time.Second {
+			logrus.Printf("limit: %f", limit)
+			logrus.Printf("last_total_power: %f", last_total_power)
+			logrus.Printf("last_solar_power: %f", last_solar_power)
 			oldlimit = limit
 			tk := client.Publish(publish_topic, fmt.Sprintf("%f", limit))
 			if tk.Error() != nil {
