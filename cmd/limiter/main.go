@@ -30,24 +30,24 @@ func main() {
 	power_chan := make(chan mqtt.MQTTSubscriptionMessage)
 
 	if err := client.Subscribe("#", power_chan); err != nil {
+		logrus.Errorln(err)
 		logrus.Fatalln("could not subscribe to power_chan - check MQTT_TOPIC_SOLAR_POWER")
 	}
 	go rxPower(power_chan)
-	// lastsubmit := time.Now()
+	lastsubmit := time.Now()
 	for {
 		limit := 700.0
 		var oldlimit float64
 		if last_total_power < 20 && last_total_power != 0.0 {
 			limit = last_total_power + last_solar_power - 20
 		}
-		logrus.Println(last_update)
-		// logrus.Println(time.Since(last_update))
-		if oldlimit != limit && time.Since(time.Unix(int64(last_update), 0)) < 10*time.Second {
+		logrus.Println(time.Since(time.Unix(int64(last_update), 0)))
+		if oldlimit != limit && time.Since(time.Unix(int64(last_update), 0)) < 10*time.Second && time.Since(lastsubmit) > 10*time.Second {
 			logrus.Printf("limit: %f", limit)
 			logrus.Printf("last_total_power: %f", last_total_power)
 			logrus.Printf("last_solar_power: %f", last_solar_power)
 			oldlimit = limit
-			// lastsubmit = time.Now()
+			lastsubmit = time.Now()
 			tk := client.Publish(publish_topic, fmt.Sprintf("%f", limit))
 			if tk.Error() != nil {
 				logrus.Errorln(tk.Error())
