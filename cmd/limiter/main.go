@@ -83,8 +83,8 @@ func rxPower(power_chan chan mqtt.MQTTSubscriptionMessage) {
 		}
 		if msg.Message.Topic() == topic_last_update {
 			var err error
-			timestamp, err := strconv.ParseInt(string(msg.Message.Payload()), 10, 64)
-			last_update = time.Unix(timestamp, 0)
+			timestamp, err := strconv.Atoi(string(msg.Message.Payload()))
+			last_update = time.Unix(int64(timestamp), 0)
 			if err != nil {
 				logrus.Errorln(err)
 			}
