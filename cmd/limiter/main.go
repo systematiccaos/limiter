@@ -13,6 +13,7 @@ import (
 
 var last_total_power float64 = 0.0
 var last_solar_power float64 = 0.0
+var last_update time.Time
 
 func main() {
 	util.SetupLogs()
@@ -32,19 +33,19 @@ func main() {
 		logrus.Fatalln("could not subscribe to power_chan - check MQTT_TOPIC_SOLAR_POWER")
 	}
 	go rxPower(power_chan)
-	lastsubmit := time.Now()
+	// lastsubmit := time.Now()
 	for {
 		limit := 700.0
 		var oldlimit float64
 		if last_total_power < 20 && last_total_power != 0.0 {
 			limit = last_total_power + last_solar_power - 20
 		}
-		if oldlimit != limit && time.Since(lastsubmit) > 5*time.Second {
+		if oldlimit != limit && time.Since(last_update) < 10*time.Second {
 			logrus.Printf("limit: %f", limit)
 			logrus.Printf("last_total_power: %f", last_total_power)
 			logrus.Printf("last_solar_power: %f", last_solar_power)
 			oldlimit = limit
-			lastsubmit = time.Now()
+			// lastsubmit = time.Now()
 			tk := client.Publish(publish_topic, fmt.Sprintf("%f", limit))
 			if tk.Error() != nil {
 				logrus.Errorln(tk.Error())
@@ -57,6 +58,7 @@ func main() {
 func rxPower(power_chan chan mqtt.MQTTSubscriptionMessage) {
 	topic_total_power := os.Getenv("MQTT_TOPIC_TOTAL_POWER")
 	topic_solar_power := os.Getenv("MQTT_TOPIC_SOLAR_POWER")
+	topic_last_update := os.Getenv("MQTT_TOPIC_LAST_UPDATE")
 
 	for {
 		msg, more := <-power_chan
@@ -73,6 +75,14 @@ func rxPower(power_chan chan mqtt.MQTTSubscriptionMessage) {
 		if msg.Message.Topic() == topic_solar_power {
 			var err error
 			last_solar_power, err = strconv.ParseFloat(string(msg.Message.Payload()), 64)
+			if err != nil {
+				logrus.Errorln(err)
+			}
+		}
+		if msg.Message.Topic() == topic_last_update {
+			var err error
+			timestamp, err := strconv.ParseInt(string(msg.Message.Payload()), 10, 64)
+			last_update = time.Unix(timestamp, 0)
 			if err != nil {
 				logrus.Errorln(err)
 			}
