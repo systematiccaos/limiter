@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"time"
@@ -35,15 +36,21 @@ func main() {
 	}
 	go rxPower(power_chan)
 	lastsubmit := time.Now()
+	limit := 700.0
+	oldlimit := 700.0
 	for {
-		limit := 700.0
-		var oldlimit float64
+		if limit+10 < 700 {
+			limit += 10
+		} else if limit < 700 {
+			limit += math.Mod(700, limit)
+		}
 		if last_total_power < 20 && last_total_power != 0.0 {
 			limit = last_total_power + last_solar_power - 20
 		}
-		logrus.Println(time.Since(time.Unix(int64(last_update), 0)))
+		// logrus.Println(time.Since(time.Unix(int64(last_update), 0)))
 		if oldlimit != limit && time.Since(time.Unix(int64(last_update), 0)) < 10*time.Second && time.Since(lastsubmit) > 10*time.Second {
 			logrus.Printf("limit: %f", limit)
+			logrus.Printf("oldlimit: %f", oldlimit)
 			logrus.Printf("last_total_power: %f", last_total_power)
 			logrus.Printf("last_solar_power: %f", last_solar_power)
 			oldlimit = limit
@@ -84,7 +91,7 @@ func rxPower(power_chan chan mqtt.MQTTSubscriptionMessage) {
 		if msg.Message.Topic() == topic_last_update {
 			var err error
 			timestamp, err := strconv.Atoi(string(msg.Message.Payload()))
-			logrus.Println(string(msg.Message.Payload()))
+			// logrus.Println(string(msg.Message.Payload()))
 			last_update = timestamp
 			if err != nil {
 				logrus.Errorln(err)
