@@ -44,7 +44,7 @@ func main() {
 		if tk.Error() != nil {
 			logrus.Errorln(tk.Error())
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(20 * time.Second)
 	}
 }
 
