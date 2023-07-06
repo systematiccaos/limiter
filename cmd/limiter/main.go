@@ -34,8 +34,8 @@ func main() {
 	go rxPower(power_chan)
 	for {
 		limit := 700.0
-		if last_total_power < 10 && last_total_power != 0.0 {
-			limit = last_total_power + last_solar_power - 10
+		if last_total_power < 20 && last_total_power != 0.0 {
+			limit = last_total_power + last_solar_power - 20
 		}
 		logrus.Printf("limit: %f", limit)
 		logrus.Printf("last_total_power: %f", last_total_power)
@@ -44,7 +44,7 @@ func main() {
 		if tk.Error() != nil {
 			logrus.Errorln(tk.Error())
 		}
-		time.Sleep(20 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }
 
