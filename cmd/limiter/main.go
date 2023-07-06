@@ -34,7 +34,7 @@ func main() {
 	go rxPower(power_chan)
 	for {
 		limit := 700.0
-		oldlimit := limit
+		var oldlimit float64
 		var lastsubmit time.Time
 		if last_total_power < 20 && last_total_power != 0.0 {
 			limit = last_total_power + last_solar_power - 20
@@ -43,6 +43,7 @@ func main() {
 		logrus.Printf("last_total_power: %f", last_total_power)
 		logrus.Printf("last_solar_power: %f", last_solar_power)
 		if oldlimit != limit && time.Since(lastsubmit) >= 10*time.Second {
+			oldlimit = limit
 			tk := client.Publish(publish_topic, fmt.Sprintf("%f", limit))
 			if tk.Error() != nil {
 				logrus.Errorln(tk.Error())
